@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شمارش معکوس انیمیشنی</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background-color: #000033;
+            color: white;
+        }
+        
+        #background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .dot {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+        
+        #moon {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 150px;
+            background-color: #FFFACD;
+            border-radius: 50%;
+            box-shadow: 0 0 20px 5px #FFFACD;
+        }
+        
+        #content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20% 0;
+        }
+        
+        #off-text {
+            font-size: 72px;
+            font-weight: bold;
+            text-shadow: 0 0 10px white;
+        }
+        
+        #countdown {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            text-shadow: 0 0 10px white;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="background"></div>
+    <div id="moon"></div>
+    <div id="content">
+        <div id="off-text">OFF</div>
+        <div id="countdown">9d 0h 0m 0s</div>
+    </div>
+
+    <script>
+        // Create moving background dots
+        const background = document.getElementById('background');
+        for (let i = 0; i < 100; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'dot';
+            dot.style.width = Math.random() * 4 + 'px';
+            dot.style.height = dot.style.width;
+            dot.style.left = Math.random() * 100 + '%';
+            dot.style.top = Math.random() * 100 + '%';
+            background.appendChild(dot);
+
+            animateDot(dot);
+        }
+
+        function animateDot(dot) {
+            const duration = Math.random() * 10 + 5;
+            const xMove = Math.random() * 100 - 50;
+            const yMove = Math.random() * 100 - 50;
+
+            dot.animate([{
+                transform: 'translate(0, 0)'
+            }, {
+                transform: `translate(${xMove}px, ${yMove}px)`
+            }], {
+                duration: duration * 1000,
+                iterations: Infinity,
+                direction: 'alternate',
+                easing: 'ease-in-out'
+            });
+        }
+
+        // Countdown timer
+        const countdownElement = document.getElementById('countdown');
+        let totalSeconds;
+
+        // Check if there's a saved time in localStorage
+        const savedTime = localStorage.getItem('countdownTime');
+        if (savedTime) {
+            totalSeconds = parseInt(savedTime);
+        } else {
+            totalSeconds = 9 * 24 * 60 * 60; // 9 days in seconds
+        }
+
+        function updateCountdown() {
+            const days = Math.floor(totalSeconds / (24 * 60 * 60));
+            const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
+            const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+            const seconds = totalSeconds % 60;
+
+            countdownElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+            if (totalSeconds > 0) {
+                totalSeconds--;
+                localStorage.setItem('countdownTime', totalSeconds.toString());
+                setTimeout(updateCountdown, 1000);
+            }
+        }
+
+        // Start the countdown
+        updateCountdown();
+    </script>
+</body>
+
+</html>
